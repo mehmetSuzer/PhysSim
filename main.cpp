@@ -13,7 +13,8 @@
 #define VERLET_COUNT    2000UL
 #define PHYSICS_UPDATE_PER_SECOND   60UL
 
-#define CONSTRAINT ARC_CONSTRAINT
+#define CONSTRAINT  ARC_CONSTRAINT
+#define VERLET      FIXED_COLOR
 
 const float secondsPerPhysicsUpdate = 1.0f / static_cast<float>(PHYSICS_UPDATE_PER_SECOND);
 const sf::Vector2f windowCenter = sf::Vector2f(WINDOW_WIDTH/2.0f, WINDOW_HEIGHT/2.0f);
@@ -25,7 +26,7 @@ int main(int argc, char **argv)
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Physics Simulation", sf::Style::Default, settings);
-    window.setFramerateLimit(PHYSICS_UPDATE_PER_SECOND);
+    // window.setFramerateLimit(PHYSICS_UPDATE_PER_SECOND);
 
     // Initialize the renderer and set the font
     Renderer& renderer = Renderer::instance();
@@ -55,10 +56,13 @@ int main(int argc, char **argv)
     // Initialize the solver that handles physics
     Solver solver = Solver(secondsPerPhysicsUpdate, constraint);
     solver.activateConstraint();
-    // solver.setConstraintRotation(0.1f);
 
     // Add a controllable verlet
-    solver.addSpeedColorVerlet(windowCenter, 4.0f, 100.0f);
+    #if VERLET == FIXED_COLOR
+        solver.addFixedColorVerlet(windowCenter, 2.0f, 100.0f, sf::Color::White);
+    #elif VERLET == SPEED_COLOR
+        solver.addSpeedColorVerlet(windowCenter, 2.0f, 100.0f);
+    #endif
 
     // Add uncontrollable verlets
     for (uint32_t i = 0; i < VERLET_COUNT-1; i++)
@@ -68,7 +72,12 @@ int main(int argc, char **argv)
         const sf::Vector2f position = sf::Vector2f(x,y);
         const float radius = 2.0f;
         const float mass = 1.0f;
+    #if VERLET == FIXED_COLOR
+        const sf::Color color = Verlet::randColor(50, 255, 50, 255, 50, 255);
+        solver.addFixedColorVerlet(position, radius, mass, color);
+    #elif VERLET == SPEED_COLOR
         solver.addSpeedColorVerlet(position, radius, mass);
+    #endif
     }
 
     // Setup the event controller
@@ -91,8 +100,9 @@ int main(int argc, char **argv)
         eventController.handleEvents();
         eventController.handleInputs(elapsedTimeSinceLastFrame);
 
-        // Update physics
+        // Update physics and clear verlets out of the window
         solver.update(elapsedTimeSinceLastFrame);
+        solver.clearVerletsOutOfWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // Render the screen
         renderer.draw(window, solver);

@@ -1,16 +1,35 @@
 
 #include "verlet.h"
 
-Verlet::Verlet(const sf::Vector2f& position_, float radius_, float mass_) :
-    currPosition(position_), prevPosition(position_), radius(radius_), mass(mass_)
+Verlet* Verlet::getNext() const
+{
+    return next;
+}
+
+void Verlet::setNext(Verlet* next_)
+{
+    next = next_;
+}
+
+bool Verlet::outOfWindow(size_t width, size_t height) const
+{
+    return !(currPosition.x > 0.0f && currPosition.x < width && currPosition.y > 0.0f && currPosition.y < height);
+}
+
+void Verlet::init(const sf::Vector2f& position_, float radius_, float mass_, const sf::Color& color_)
 {
     assert(radius_ > 0.0f);
     assert(mass_ > 0.0f);
 
-    circle.setOrigin(radius, radius);
-    circle.setRadius(radius);
+    currPosition = position_;
+    prevPosition = position_;
+    radius = radius_;
+    mass = mass_;
 
-    uint32_t pointCount = (radius > 2.0f) ? static_cast<uint32_t>(2*radius) : 4UL;
+    circle.setOrigin(radius_, radius_);
+    circle.setRadius(radius_);
+    circle.setFillColor(color_);
+    size_t pointCount = (radius_ > 2.0f) ? static_cast<size_t>(2.0f*radius_) : 4UL;
     circle.setPointCount(pointCount);
 }
 
@@ -102,18 +121,11 @@ void Verlet::accelerate(const sf::Vector2f& accelerationVector)
     acceleration += accelerationVector;
 }
 
-const sf::Vector2f& Verlet::getAcceleration() const 
-{
-    return acceleration;
-}
-
-static sf::Color randColor(uint8_t lowRed, uint8_t highRed,
-                    uint8_t lowGreen, uint8_t highGreen,
-                    uint8_t lowBlue, uint8_t highBlue) 
+sf::Color Verlet::randColor(uint8_t lowRed, uint8_t highRed,
+    uint8_t lowGreen, uint8_t highGreen, uint8_t lowBlue, uint8_t highBlue) 
 {
     const uint8_t red = rand()%(highRed-lowRed) + lowRed;
     const uint8_t green = rand()%(highGreen-lowGreen) + lowGreen;
     const uint8_t blue = rand()%(highBlue-lowBlue) + lowBlue;
     return sf::Color(red, green, blue);
 }
-

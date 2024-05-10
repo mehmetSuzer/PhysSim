@@ -5,11 +5,10 @@
 #include <assert.h>
 #include "verlet.h"
 
-#define RECTANGLE_CONTRAINT     0
-#define CIRCLE_CONSTRAINT       1
-#define ELLIPSE_CONSTRAINT      2
-#define ARC_CONSTRAINT          3
-
+#define RECTANGLE_CONTRAINT     0UL
+#define CIRCLE_CONSTRAINT       1UL
+#define ELLIPSE_CONSTRAINT      2UL
+#define ARC_CONSTRAINT          3UL
 
 // Constraint which prevents verlets going out of the boundaries
 // Objects can pass through the boundary if it comes from outside

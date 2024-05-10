@@ -5,10 +5,7 @@
 #include <vector>
 #include "mathematics.h"
 #include "constraint.h"
-
-#include "fixed_color_verlet.h"
-#include "speed_color_verlet.h"
-
+#include "verlet_pool.h"
 
 struct Link {
     Verlet* verlet1;
@@ -63,6 +60,7 @@ public:
     float getConstraintAngularVelocity() const;
 
     void update(float elapsedTimeSinceLastFrame);
+    void clearVerletsOutOfWindow(size_t width, size_t height);
 
 private:
     void sortVerletsX();

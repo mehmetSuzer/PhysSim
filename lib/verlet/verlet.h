@@ -12,7 +12,18 @@
 #define smaller(num1, num2) ((num1 < num2) ? num1 : num2)
 #define greater(num1, num2) ((num1 > num2) ? num1 : num2)
 
+#define SPEED_COLOR     0UL
+#define FIXED_COLOR     1UL
+
 class Verlet {
+private:
+    Verlet* next;
+
+public:
+    Verlet* getNext() const;
+    void setNext(Verlet* next_);
+    bool outOfWindow(size_t width, size_t height) const;
+
 protected:
     sf::CircleShape circle = sf::CircleShape(1.0f);
     bool affectedByGravity = true;
@@ -21,17 +32,15 @@ protected:
     sf::Vector2f prevPosition;
     sf::Vector2f acceleration;
 
-    const float radius;
-    const float mass;
+    float radius;
+    float mass;
 
-protected:
     virtual void updateColor(float dt) = 0;
 
 public:
-    Verlet(const sf::Vector2f& position_, float radius_, float mass_);
-
-    virtual ~Verlet() {}
-
+    virtual uint32_t type() const = 0;
+    
+    void init(const sf::Vector2f& position_, float radius_, float mass_, const sf::Color& color_);
     void draw(sf::RenderTarget& target);
 
     const sf::Vector2f& getPosition() const;
@@ -54,12 +63,10 @@ public:
 
     void force(const sf::Vector2f& forceVector);
     void accelerate(const sf::Vector2f& accelerationVector);
-    const sf::Vector2f& getAcceleration() const;
-};
 
-static sf::Color randColor(uint8_t lowRed, uint8_t highRed,
-                    uint8_t lowGreen, uint8_t highGreen,
-                    uint8_t lowBlue, uint8_t highBlue);
+    static sf::Color randColor(uint8_t lowRed, uint8_t highRed,
+        uint8_t lowGreen, uint8_t highGreen, uint8_t lowBlue, uint8_t highBlue);
+};
 
 #endif // __VERLET_H__
 

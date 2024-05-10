@@ -9,22 +9,18 @@ Solver::~Solver()
 
 void Solver::clearVerlets() 
 {
-    for (uint32_t i = 0; i < getVerletCount(); i++)
-    {
-        delete verlets[i];
-    }
     verlets.clear();
 }
 
 void Solver::addFixedColorVerlet(const sf::Vector2f& position, float radius, float mass, const sf::Color& color)
 {
-    Verlet* verlet = new FixedColorVerlet(position, radius, mass, color);
+    Verlet* verlet = VerletPool::instance().getFixedColorVerlet(position, radius, mass, color);
     verlets.push_back(verlet);
 }
 
 void Solver::addSpeedColorVerlet(const sf::Vector2f& position, float radius, float mass)
 {
-    Verlet* verlet = new SpeedColorVerlet(position, radius, mass);
+    Verlet* verlet = VerletPool::instance().getSpeedColorVerlet(position, radius, mass);
     verlets.push_back(verlet);
 }
 
@@ -133,6 +129,18 @@ void Solver::update(float elapsedTimeSinceLastFrame)
             updatePositions(subSecondsPerPhysicsUpdate);
         }
         elapsedTimeSinceLastPhysicsUpdate -= secondsPerPhysicsUpdate;
+    }
+}
+
+void Solver::clearVerletsOutOfWindow(size_t width, size_t height)
+{
+    for (uint32_t i = 0; i < getVerletCount(); i++)
+    {
+        if (verlets[i]->outOfWindow(width, height))
+        {
+            VerletPool::instance().releaseVerlet(verlets[i]);
+            verlets.erase(verlets.begin() + i);
+        }
     }
 }
 

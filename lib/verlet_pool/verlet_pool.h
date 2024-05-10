@@ -7,14 +7,30 @@
 
 class VerletPool {
 private:
-    static const uint32_t verletPoolSize = 3000;
-    SpeedColorVerlet speedColorVerletPool[verletPoolSize];
-    FixedColorVerlet FixedColorVerletPool[verletPoolSize];
+    static VerletPool instance_;
+
+    static const uint32_t poolSize = 3000;
+    SpeedColorVerlet speedColorVerletPool[poolSize];
+    FixedColorVerlet fixedColorVerletPool[poolSize];
+
+    uint32_t availableSpeedColorVerletCount;
+    uint32_t availableFixedColorVerletCount;
+
+    Verlet* firstAvailableSpeedColorVerlet;
+    Verlet* firstAvailableFixedColorVerlet;
+
+    VerletPool();
 
 public:
-    SpeedColorVerlet* getSpeedColorVerlet(const sf::Vector2f& position, float radius, float mass);
-    FixedColorVerlet* getFixedColorVerlet(const sf::Vector2f& position, float radius, float mass, const sf::Color& color);
+    static VerletPool& instance();
 
+    uint32_t getAvailableSpeedColorVerletCount() const;
+    uint32_t getAvailableFixedColorVerletCount() const;
+
+    Verlet* getSpeedColorVerlet(const sf::Vector2f& position, float radius, float mass);
+    Verlet* getFixedColorVerlet(const sf::Vector2f& position, float radius, float mass, const sf::Color& color);
+
+    void releaseVerlet(Verlet* verlet);
 };
 
 #endif // __VERLET_POOL_H__

@@ -4,14 +4,19 @@
 
 #include "verlet.h"
 
-class FixedColorVerlet : public Verlet {
-private:
-    const sf::Color color;
+class VerletPool;
 
+class FixedColorVerlet : public Verlet {
+    friend class VerletPool;
+
+private:
+    FixedColorVerlet() {} // only verlet pool can create instances of this class
     void updateColor(float dt) override {}
 
-public:
-    FixedColorVerlet(const sf::Vector2f& position_, float radius_, float mass_, const sf::Color& color_);
+    uint32_t type() const override
+    {
+        return FIXED_COLOR;
+    }
 };
 
 #endif // __FIXED_COLOR_VERLET_H__
