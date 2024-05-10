@@ -16,12 +16,11 @@
 #define CONSTRAINT  ARC_CONSTRAINT
 #define VERLET      FIXED_COLOR
 
-const float secondsPerPhysicsUpdate = 1.0f / static_cast<float>(PHYSICS_UPDATE_PER_SECOND);
-const sf::Vector2f windowCenter = sf::Vector2f(WINDOW_WIDTH/2.0f, WINDOW_HEIGHT/2.0f);
-const std::string dataPath = "data/";
-
 int main(int argc, char **argv)
-{
+{   
+    const sf::Vector2f windowCenter = sf::Vector2f(WINDOW_WIDTH/2.0f, WINDOW_HEIGHT/2.0f);
+    const std::string dataPath = "data/";
+
     // Initialize the window
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -54,7 +53,7 @@ int main(int argc, char **argv)
 #endif
 
     // Initialize the solver that handles physics
-    Solver solver = Solver(secondsPerPhysicsUpdate, constraint);
+    Solver solver = Solver(1.0f/static_cast<float>(PHYSICS_UPDATE_PER_SECOND), constraint);
     solver.activateConstraint();
 
     // Add a controllable verlet
