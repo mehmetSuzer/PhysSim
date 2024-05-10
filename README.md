@@ -28,8 +28,11 @@ Defaults keys are J (CCW), K (STOP), and L (CW).
 A good physics simulation cannot be thought without a music. The following song is used in the simulation:
 
 "Sappheiros - Embrace" is under a Creative Commons license (CC BY 3.0)
+
 https://www.youtube.com/c/Sappheiros
+
 Music promoted by BreakingCopyright: https://bit.ly/embrace-song
+
 
 Those who want can turn on/off the music. 
 The default key for it is M (ON), N (OFF).
